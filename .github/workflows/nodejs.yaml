@@ -18,7 +18,7 @@ jobs:
 
   nodejs-frontend:
     name: Node.js CI
-    uses: ./.github/workflows/nodejs.yaml
+    uses: ./.github/workflows/nodejs-reusable.yaml
     with:
       node-version: '24'
       project-path: './frontend'
@@ -32,7 +32,7 @@ jobs:
 
   nodejs-backend:
     name: Node.js CI
-    uses: ./.github/workflows/nodejs.yaml
+    uses: ./.github/workflows/nodejs-reusable.yaml
     with:
       node-version: '24'
       project-path: './backend'
