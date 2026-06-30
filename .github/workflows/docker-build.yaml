@@ -20,6 +20,7 @@ jobs:
     with:
       username: ${{ github.event.pull_request.user.login }}
       base-sha: ${{ github.event.pull_request.base.sha }}
+      author-association: ${{ github.event.pull_request.author_association }}
 
   image-version:
     name: Determine Image Version

@@ -13,6 +13,7 @@ jobs:
     with:
       username: ${{ github.event.pull_request.user.login }}
       base-sha: ${{ github.event.pull_request.base.sha }}
+      author-association: ${{ github.event.pull_request.author_association }}
 
   close-pr:
     needs: check
@@ -22,7 +23,7 @@ jobs:
       pull-requests: write
       contents: read
     steps:
-      - uses: actions/github-script@v7
+      - uses: actions/github-script@v9
         with:
           script: |
             await github.rest.issues.createComment({
