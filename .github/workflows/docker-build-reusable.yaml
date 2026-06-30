@@ -126,6 +126,7 @@ jobs:
     permissions:
       contents: read
       pull-requests: write
+      packages: read
 
     if: ${{ github.event_name == 'pull_request' }}
 
@@ -143,6 +144,33 @@ jobs:
             const newTag = process.env.NEW_TAG;
             const imageName = process.env.IMAGE_NAME;
             const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const packageUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/pkgs/container/${imageName}`;
+
+            // Resolve the version-specific URL using the amd64 tag (multi-arch manifest may not exist yet)
+            let versionUrl = packageUrl;
+            try {
+              const amd64Tag = `${newTag}-amd64`;
+              let versions;
+              try {
+                ({ data: versions } = await github.rest.packages.getAllPackageVersionsForPackageOwnedByOrg({
+                  package_type: 'container',
+                  package_name: imageName,
+                  org: context.repo.owner,
+                  per_page: 100,
+                }));
+              } catch (_) {
+                ({ data: versions } = await github.rest.packages.getAllPackageVersionsForPackageOwnedByUser({
+                  package_type: 'container',
+                  package_name: imageName,
+                  username: context.repo.owner,
+                  per_page: 100,
+                }));
+              }
+              const version = versions.find(v => v.metadata?.container?.tags?.includes(amd64Tag));
+              if (version) {
+                versionUrl = `${packageUrl}/${version.id}`;
+              }
+            } catch (_) {}
 
             const marker = `<!-- docker-build-tags-list:${imageName} -->`;
 
@@ -195,6 +223,7 @@ jobs:
               '',
               `**Tag:** \`${newTag}\``,
               `**Workflow:** [View run](${runUrl})`,
+              `**Package:** [View on GitHub Packages](${versionUrl})`,
               '',
               previousSection,
               '',
