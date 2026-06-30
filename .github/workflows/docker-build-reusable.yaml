@@ -77,6 +77,8 @@ jobs:
           images: ${{ steps.image-name.outputs.image-name }}
           tags: |
             ${{ inputs.image-version }}-${{ matrix.platform.name }}
+          labels: |
+            org.opencontainers.image.source=https://github.com/${{ github.repository }}
 
       - name: Build and push Docker image
         id: build-and-push
