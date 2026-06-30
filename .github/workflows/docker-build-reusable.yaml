@@ -41,7 +41,7 @@ jobs:
             {
               name: "arm64",
               dockerName: "linux/arm64",
-              runner: "ubuntu-20.04-arm",
+              runner: "ubuntu-24.04-arm",
             },
           ]
 
